@@ -12,24 +12,36 @@ def visit(node: Any):
 
 def dfs_iterative(G: nx.Graph, node: Any):
     visited = {n: False for n in G}
+    stack = queue.LifoQueue()
+    stack.put(node)
+    while not stack.empty():
+        node = stack.get()
+        if not visited[node]:
+            visit(node)
+            visited[node] = True
+            for n_neigh in G.neighbors(node):
+                stack.put(n_neigh)
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+def topoSortvisit(s, visited, list):
 
+    visited[s] = True
+    for i in G[s]:
+        if not visited[i]:
+            topoSortvisit(i, visited, list)
+    list.insert(0, s)
 
-def topological_sort(G: nx.DiGraph, node: Any):
+def topological_sort(G: nx.DiGraph):
     visited = {n: False for n in G}
+    list = []
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for v in G:
+        if not visited[v]:
+            topoSortvisit(v, visited, list)
 
+    print(list)
 
 if __name__ == "__main__":
-    # Load and plot the graph
-    G = nx.read_edgelist("practicum_2/homework/graph_2.edgelist", create_using=nx.Graph)
-    # plot_graph(G)
+    G = nx.read_edgelist("./graph_2.edgelist", create_using=nx.Graph)
 
     print("Iterative DFS")
     print("-" * 32)
@@ -37,9 +49,9 @@ if __name__ == "__main__":
     print()
 
     G = nx.read_edgelist(
-        "practicum_2/homework/graph_2.edgelist", create_using=nx.DiGraph
+        "./graph_2.edgelist", create_using=nx.DiGraph
     )
     plot_graph(G)
     print("Topological sort")
     print("-" * 32)
-    topological_sort(G, node="0")
+    topological_sort(G)
