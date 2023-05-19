@@ -3,17 +3,38 @@ from numpy.typing import NDArray
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    n = len(A)
+    L = np.eye(n)
+    P = np.eye(n)
+    U = A.copy()   
+    
+    for j in range(n):
+        max_row_idx = j
+        max_row_val = abs(U[j, j])
 
+        if permute:
+            for i in range(j + 1, n):
+                if abs(U[i, j]) > max_row_val:
+                    max_row_idx = i
+                    max_row_val = abs(U[i, j])
+
+        if j != max_row_idx:
+            P[[j, max_row_idx]] = P[[max_row_idx, j]]
+            L[[j, max_row_idx], :j] = L[[max_row_idx, j], :j]
+            U[[j, max_row_idx], :] = U[[max_row_idx, j], :]
+
+        L[j:, j] = U[j:, j] / U[j, j]
+        U[j+1:, j:] -= L[j+1:, j, np.newaxis] * U[j, j:]
+
+    return L, U, P
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    
+    # LU x = Pb
+    A = np.matmul(L, U)
+    B = np.matmul(P, b)
+    x = np.linalg.solve(A, B)
+    return x
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArray, NDArray]:
